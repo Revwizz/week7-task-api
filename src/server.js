@@ -1,8 +1,17 @@
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 const taskRoutes = require('./routes/tasks');
 
 const app = express();
+app.use(helmet());
+app.use(compression());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100, standardHeaders: true }));
+
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
